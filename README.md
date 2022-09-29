@@ -1,0 +1,1 @@
+# Open Avenues micro-internship: Cloud Customer Contact Book
