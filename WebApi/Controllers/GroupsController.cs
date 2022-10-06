@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
 
@@ -12,6 +13,7 @@ namespace WebApi.Controllers;
 public class GroupsController : ControllerBase
 {
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<GroupModel>), StatusCodes.Status200OK)]
     public Task<IActionResult> GetAll()
     {
         var result = GenerateFew(_ => new GroupModel
@@ -25,6 +27,7 @@ public class GroupsController : ControllerBase
     }
 
     [HttpGet("{groupId:long}")]
+    [ProducesResponseType(typeof(GroupModel), StatusCodes.Status200OK)]
     public Task<IActionResult> Get(long groupId)
     {
         var result = new GroupModel
@@ -38,6 +41,7 @@ public class GroupsController : ControllerBase
     }
 
     [HttpPost]
+    [ProducesResponseType(typeof(GroupModel), StatusCodes.Status200OK)]
     public Task<IActionResult> Post([FromBody]GroupCreateModel model)
     {
         var result = new GroupModel
@@ -51,6 +55,7 @@ public class GroupsController : ControllerBase
     }
 
     [HttpPut("{groupId:long}")]
+    [ProducesResponseType(typeof(GroupModel), StatusCodes.Status200OK)]
     public Task<IActionResult> Put(long groupId, [FromBody] GroupCreateModel model)
     {
         var result = new GroupModel
@@ -64,12 +69,14 @@ public class GroupsController : ControllerBase
     }
 
     [HttpDelete("{groupId:long}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public Task<IActionResult> Delete(long groupId)
     {
         return Task.FromResult<IActionResult>(Ok());
     }
 
     [HttpGet("{groupId:long}/Contacts")]
+    [ProducesResponseType(typeof(IEnumerable<long>), StatusCodes.Status200OK)]
     public Task<IActionResult> GetContacts(long groupId)
     {
         var result = GenerateFew(_ => Random.Shared.NextInt64());

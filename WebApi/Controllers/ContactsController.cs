@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
 
@@ -11,7 +12,14 @@ namespace WebApi.Controllers;
 [Route("[controller]")]
 public class ContactsController : ControllerBase
 {
+    /// <summary>
+    /// Returns all exising contacts, filters can be applied.
+    /// </summary>
+    /// <param name="firstName">Filter by first name.</param>
+    /// <param name="lastName">Filter by first name.</param>
+    /// <param name="phoneNumber">Filter by first name.</param>
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<ContactModel>), StatusCodes.Status200OK)]
     public Task<IActionResult> GetAll(string? firstName = default, string? lastName = default, string? phoneNumber = default)
     {
         var result = GenerateFew(_ => new ContactModel
@@ -25,7 +33,12 @@ public class ContactsController : ControllerBase
         return Task.FromResult<IActionResult>(Ok(result));
     }
 
+    /// <summary>
+    /// Get contact by id.
+    /// </summary>
+    /// <param name="contactId">Contact id.</param>
     [HttpGet("{contactId:long}")]
+    [ProducesResponseType(typeof(ContactModel), StatusCodes.Status200OK)]
     public Task<IActionResult> Get(long contactId)
     {
         var result = new ContactModel
@@ -39,7 +52,11 @@ public class ContactsController : ControllerBase
         return Task.FromResult<IActionResult>(Ok(result));
     }
 
+    /// <summary>
+    /// Create a new contact.
+    /// </summary>
     [HttpPost]
+    [ProducesResponseType(typeof(ContactModel), StatusCodes.Status200OK)]
     public Task<IActionResult> Post([FromBody]ContactCreateModel model)
     {
         var result = new ContactModel
@@ -54,6 +71,7 @@ public class ContactsController : ControllerBase
     }
 
     [HttpPut("{contactId:long}")]
+    [ProducesResponseType(typeof(ContactModel), StatusCodes.Status200OK)]
     public Task<IActionResult> Put(long contactId, [FromBody] ContactCreateModel model)
     {
         var result = new ContactModel
@@ -68,12 +86,14 @@ public class ContactsController : ControllerBase
     }
 
     [HttpDelete("{contactId:long}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public Task<IActionResult> Delete(long contactId)
     {
         return Task.FromResult<IActionResult>(Ok());
     }
 
     [HttpGet("{contactId:long}/Groups")]
+    [ProducesResponseType(typeof(IEnumerable<long>), StatusCodes.Status200OK)]
     public Task<IActionResult> GetGroups(long contactId)
     {
         var result = GenerateFew(_ => Random.Shared.NextInt64());
@@ -82,12 +102,14 @@ public class ContactsController : ControllerBase
     }
 
     [HttpPut("{contactId:long}/Groups/{groupId:long}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public Task<IActionResult> AddGroup(long contactId, long groupId)
     {
         return Task.FromResult<IActionResult>(Ok());
     }
 
     [HttpDelete("{contactId:long}/Groups/{groupId:long}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public Task<IActionResult> DeleteGroup(long contactId, long groupId)
     {
         return Task.FromResult<IActionResult>(Ok());
