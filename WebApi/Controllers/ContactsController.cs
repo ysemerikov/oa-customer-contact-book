@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
+using WebApi.Services;
 
 namespace WebApi.Controllers;
 
@@ -12,6 +13,8 @@ namespace WebApi.Controllers;
 [Route("[controller]")]
 public class ContactsController : ControllerBase
 {
+    private readonly ContactService _contactService;
+
     /// <summary>
     /// Returns all exising contacts, filters can be applied.
     /// </summary>
@@ -20,17 +23,11 @@ public class ContactsController : ControllerBase
     /// <param name="phoneNumber">Filter by first name.</param>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<ContactModel>), StatusCodes.Status200OK)]
-    public Task<IActionResult> GetAll(string? firstName = default, string? lastName = default, string? phoneNumber = default)
+    public async Task<IActionResult> GetAll(string? firstName = default, string? lastName = default, string? phoneNumber = default)
     {
-        var result = GenerateFew(_ => new ContactModel
-        {
-            Id = Random.Shared.NextInt64(),
-            FirstName = firstName ?? "John",
-            LastName = lastName ?? "Smith",
-            PhoneNumber = phoneNumber ?? "+12345678900",
-        });
+        var result = await _contactService.GetAll(firstName, lastName, phoneNumber);
 
-        return Task.FromResult<IActionResult>(Ok(result));
+        return Ok(result);
     }
 
     /// <summary>
@@ -39,17 +36,12 @@ public class ContactsController : ControllerBase
     /// <param name="contactId">Contact id.</param>
     [HttpGet("{contactId:long}")]
     [ProducesResponseType(typeof(ContactModel), StatusCodes.Status200OK)]
-    public Task<IActionResult> Get(long contactId)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Get(long contactId)
     {
-        var result = new ContactModel
-        {
-            Id = Random.Shared.NextInt64(),
-            FirstName = "John",
-            LastName = "Smith",
-            PhoneNumber = "+12345678900",
-        };
+        var result = await _contactService.Get(contactId);
 
-        return Task.FromResult<IActionResult>(Ok(result));
+        return result == default ? NotFound() : Ok(result);
     }
 
     /// <summary>
@@ -57,39 +49,29 @@ public class ContactsController : ControllerBase
     /// </summary>
     [HttpPost]
     [ProducesResponseType(typeof(ContactModel), StatusCodes.Status200OK)]
-    public Task<IActionResult> Post([FromBody]ContactCreateModel model)
+    public async Task<IActionResult> Post([FromBody]ContactCreateModel model)
     {
-        var result = new ContactModel
-        {
-            Id = Random.Shared.NextInt64(),
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-            PhoneNumber = model.PhoneNumber,
-        };
+        var result = await _contactService.Create(model);
 
-        return Task.FromResult<IActionResult>(Ok(result));
+        return Ok(result);
     }
 
     [HttpPut("{contactId:long}")]
     [ProducesResponseType(typeof(ContactModel), StatusCodes.Status200OK)]
-    public Task<IActionResult> Put(long contactId, [FromBody] ContactCreateModel model)
+    public async Task<IActionResult> Put(long contactId, [FromBody] ContactCreateModel model)
     {
-        var result = new ContactModel
-        {
-            Id = contactId,
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-            PhoneNumber = model.PhoneNumber,
-        };
+        var result = await _contactService.Update(contactId, model);
 
-        return Task.FromResult<IActionResult>(Ok(result));
+        return result == default ? NotFound() : Ok(result);
     }
 
     [HttpDelete("{contactId:long}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<IActionResult> Delete(long contactId)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(long contactId)
     {
-        return Task.FromResult<IActionResult>(Ok());
+        var result = await _contactService.Delete(contactId);
+        return result ? Ok() : NotFound();
     }
 
     [HttpGet("{contactId:long}/Groups")]
@@ -119,5 +101,10 @@ public class ContactsController : ControllerBase
     {
         var count = Random.Shared.Next(3, 10);
         return Enumerable.Range(0, count).Select(generator);
+    }
+
+    public ContactsController(ContactService contactService)
+    {
+        _contactService = contactService;
     }
 }
