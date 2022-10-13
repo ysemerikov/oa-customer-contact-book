@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{C148A138-FFFC-4EA4-9FBD-44B0C99F8C8F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database", "Database\Database.csproj", "{117AB533-AB82-4681-95EE-D54717ED415C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{C148A138-FFFC-4EA4-9FBD-44B0C99F8C8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C148A138-FFFC-4EA4-9FBD-44B0C99F8C8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C148A138-FFFC-4EA4-9FBD-44B0C99F8C8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{117AB533-AB82-4681-95EE-D54717ED415C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{117AB533-AB82-4681-95EE-D54717ED415C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{117AB533-AB82-4681-95EE-D54717ED415C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{117AB533-AB82-4681-95EE-D54717ED415C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
