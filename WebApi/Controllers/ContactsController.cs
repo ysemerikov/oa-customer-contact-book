@@ -39,9 +39,9 @@ public class ContactsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(long contactId)
     {
-        var result = await _contactService.Get(contactId);
+        var result = await _contactService.GetByIds(contactId);
 
-        return result == default ? NotFound() : Ok(result);
+        return result.Count == 0 ? NotFound() : Ok(result[0]);
     }
 
     /// <summary>

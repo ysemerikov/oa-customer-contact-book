@@ -8,6 +8,7 @@ using WebApi.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<ContactService>();
+builder.Services.AddScoped<GroupService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

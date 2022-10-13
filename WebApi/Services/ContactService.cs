@@ -21,17 +21,17 @@ public class ContactService
         return result.ToList();
     }
 
-    public async Task<ContactModel?> Get(long contactId)
+    public async Task<List<ContactModel>> GetByIds(params long[] ids)
     {
-        var result = new ContactModel
+        var result = ids.Select(id => new ContactModel
         {
-            Id = Random.Shared.NextInt64(),
+            Id = id,
             FirstName = "John",
             LastName = "Smith",
             PhoneNumber = "+12345678900",
-        };
+        });
 
-        return result;
+        return result.ToList();
     }
 
     public async Task<ContactModel> Create(ContactCreateModel model)
