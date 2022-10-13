@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +13,7 @@ namespace WebApi.Controllers;
 public class ContactsController : ControllerBase
 {
     private readonly ContactService _contactService;
+    private readonly GroupService _groupService;
 
     /// <summary>
     /// Returns all exising contacts, filters can be applied.
@@ -76,35 +76,36 @@ public class ContactsController : ControllerBase
 
     [HttpGet("{contactId:long}/Groups")]
     [ProducesResponseType(typeof(IEnumerable<long>), StatusCodes.Status200OK)]
-    public Task<IActionResult> GetGroups(long contactId)
+    public async Task<IActionResult> GetGroups(long contactId)
     {
-        var result = GenerateFew(_ => Random.Shared.NextInt64());
+        var contactGroups = await _groupService.GetAll(contactId);
 
-        return Task.FromResult<IActionResult>(Ok(result));
+        return Ok(contactGroups.Select(x => x.Id));
     }
 
     [HttpPut("{contactId:long}/Groups/{groupId:long}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<IActionResult> AddGroup(long contactId, long groupId)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> AddGroup(long contactId, long groupId)
     {
-        return Task.FromResult<IActionResult>(Ok());
+        return await _groupService.AddContactToGroup(contactId, groupId)
+            ? Ok()
+            : NotFound();
     }
 
     [HttpDelete("{contactId:long}/Groups/{groupId:long}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public Task<IActionResult> DeleteGroup(long contactId, long groupId)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteGroup(long contactId, long groupId)
     {
-        return Task.FromResult<IActionResult>(Ok());
+        return await _groupService.RemoveContactFromGroup(contactId, groupId)
+            ? Ok()
+            : NotFound();
     }
 
-    private static IEnumerable<T> GenerateFew<T>(Func<int, T> generator)
-    {
-        var count = Random.Shared.Next(3, 10);
-        return Enumerable.Range(0, count).Select(generator);
-    }
-
-    public ContactsController(ContactService contactService)
+    public ContactsController(ContactService contactService, GroupService groupService)
     {
         _contactService = contactService;
+        _groupService = groupService;
     }
 }

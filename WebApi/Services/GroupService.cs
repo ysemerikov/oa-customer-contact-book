@@ -12,7 +12,7 @@ public class GroupService
 {
     private readonly ContactService _contactService;
 
-    public async Task<List<GroupModel>> GetAll()
+    public async Task<List<GroupModel>> GetAll(long? contactId = default)
     {
         var result = GenerateFew(_ => new GroupModel
         {
@@ -70,6 +70,16 @@ public class GroupService
         var contactIds = GenerateFew(_ => Random.Shared.NextInt64());
 
         return await _contactService.GetByIds(contactIds.ToArray());
+    }
+
+    public async Task<bool> AddContactToGroup(long contactId, long groupId)
+    {
+        return true;
+    }
+
+    public async Task<bool> RemoveContactFromGroup(long contactId, long groupId)
+    {
+        return true;
     }
 
     private static IEnumerable<T> GenerateFew<T>(Func<int, T> generator)
